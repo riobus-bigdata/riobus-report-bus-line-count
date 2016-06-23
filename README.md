@@ -10,7 +10,14 @@
     <code>$ sbt package</code></li>
     <li>jar will be inside ./target/scala-2.10/ folder<br>
 </ol>
+<br>
+<h6>now you need to submit this jar to spark</h6>
+<ol>
+	<li>
+		For example, use the command:
+		spark-submit --class "RiobusReportBusLineCout" --master local[2] target/scala-2.10/riobusuc2_2.10-1.0.jar NUMBER_OF_OUTPUT_SAMPLES START_DATE END_DATE
+	</li>
+</ol>
 
-<h6>now you need to submit this jar to spark<br>
-read https://spark.apache.org/docs/latest/submitting-applications.html for more information<br>
-this project has been tested on spark 1.3.1</h6>
+
+
