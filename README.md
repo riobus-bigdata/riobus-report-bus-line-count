@@ -12,8 +12,8 @@
 </ol>
 <br>
 <h6>now you need to submit this jar to spark</h6>
-	For example, use the command: <br>
-	spark-submit --class "RiobusReportBusLineCout" --master local[2] target/scala-2.10/riobusuc2_2.10-1.0.jar NUMBER_OF_OUTPUT_SAMPLES START_DATE END_DATE
+For example, use the command:
+spark-submit --class "RiobusReportBusLineCout" --master local[2] target/scala-2.10/riobusuc2_2.10-1.0.jar NUMBER_OF_OUTPUT_SAMPLES START_DATE END_DATE
 
 
 
