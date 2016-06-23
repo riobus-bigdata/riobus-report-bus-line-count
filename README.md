@@ -1,4 +1,4 @@
-#riobus-report
+#riobus-report-bus-line-count
 
 <h6>you only need to produce a jar</h6>
 <ol>
@@ -12,12 +12,9 @@
 </ol>
 <br>
 <h6>now you need to submit this jar to spark</h6>
-<ol>
-	<li>
-		For example, use the command:
-		spark-submit --class "RiobusReportBusLineCout" --master local[2] target/scala-2.10/riobusuc2_2.10-1.0.jar NUMBER_OF_OUTPUT_SAMPLES START_DATE END_DATE
-	</li>
-</ol>
+	For example, use the command: <br>
+	spark-submit --class "RiobusReportBusLineCout" --master local[2] target/scala-2.10/riobusuc2_2.10-1.0.jar NUMBER_OF_OUTPUT_SAMPLES START_DATE END_DATE
+
 
 
 
