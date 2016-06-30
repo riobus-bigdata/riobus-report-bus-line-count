@@ -13,7 +13,7 @@ object BusLineCount {
     val sc = new SparkContext(conf)
 
     // TODO: set this up as environment variable
-	val path = "hdfs://localhost:9000/"
+	val path = "hdfs://localhost:8020/"
 	val filenameAndPath = path + "/riobusData/estudo_cassio_part_0000000000[0-1][0-9].csv" // path to file being read.
 	// val filenameAndPath = path + "/riobusData/estudo_cassio_part_000000000000.csv" // path to file being read.
 	var resultFilenameAndPath = "~/bus-line-result.txt" // path to file that will be written.
