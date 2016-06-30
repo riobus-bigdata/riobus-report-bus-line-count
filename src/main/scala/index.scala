@@ -8,15 +8,15 @@ import org.apache.hadoop.fs.Path
 
 import org.apache.spark.{SparkConf, SparkContext}
 
-object RiobusReportBusLineCount {
-	val conf = new SparkConf().setAppName("RiobusReportBusLineCount")//.setMaster("spark://localhost:7077")
+object BusLineCount {
+	val conf = new SparkConf().setAppName("BusLineCount")//.setMaster("spark://localhost:7077")
     val sc = new SparkContext(conf)
 
     // TODO: set this up as environment variable
-	val path = "hdfs://127.0.0.1:9000/"
+	val path = "hdfs://localhost:9000/"
 	val filenameAndPath = path + "/riobusData/estudo_cassio_part_0000000000[0-1][0-9].csv" // path to file being read.
 	// val filenameAndPath = path + "/riobusData/estudo_cassio_part_000000000000.csv" // path to file being read.
-	val resultFilenameAndPath = "/riobusResult/bus-line-result.txt" // path to file that will be written.
+	var resultFilenameAndPath = "~/bus-line-result.txt" // path to file that will be written.
 
 	val dateFormatGoogle = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'") // format used by the data we have.
 	val dateFormathttp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") // format we use inside http message.
@@ -32,15 +32,18 @@ object RiobusReportBusLineCount {
 		// if 1 argument, we will assume it is the sampleLength
 		// if 2 arguments, we will asumme they are the dateBegin and dateEnd
 		// if 3 or more arguments, we will assume they are the sampleLength, dateBegin and dateEnd
-		if (args.length == 1){
-			sampleLength = args(0).toInt
-		} else if(args.length == 2) {
-			dateBegin = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'")).parse(args(0))
-			dateEnd = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'")).parse(args(1))
-		} else if(args.length >= 3) {
-			sampleLength = args(0).toInt
-			dateBegin = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'")).parse(args(1))
-			dateEnd = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'")).parse(args(2))
+		if (args.length >= 1) {
+			resultFilenameAndPath = args(0)
+			if (args.length == 2){
+				sampleLength = args(1).toInt
+			} else if(args.length == 3) {
+				dateBegin = dateFormathttp.parse(args(1))
+				dateEnd = dateFormathttp.parse(args(2))
+			} else if(args.length >= 4) {
+				dateBegin = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")).parse(args(1))
+				dateEnd = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")).parse(args(2))
+				sampleLength = args(3).toInt
+			}
 		}
 
 		// Defining functions instead of methods. I am doing it because 'myApp' is an object, not a class, so I don't have
@@ -81,17 +84,11 @@ object RiobusReportBusLineCount {
 			// Counting all the diferent buses in a bus line
 			.reduceByKey( (x,y) => ("", x._2 + y._2) )
 
-		// This is necessary to write the file to hdfs
-		val conf = new Configuration()
-	    conf.set("fs.defaultFS", path)
-	    val fs = FileSystem.get(conf)
-	    val output = fs.create(new Path(resultFilenameAndPath))
-
 		// we will need to write in a file the argument we have received (as a confirmation), the size of the result and 
 		// a sample of it, of a small size.
-		val pw = new PrintWriter(output) // creating file to be written on.
-
-		busLineCount.take(sampleLength).foreach(x => pw.write(x._1 + ": " + x._2._2.toString + "\n")) // writing the first records.
+		val pw = new PrintWriter(new File(resultFilenameAndPath), "UTF-8") // creating file to be written on.
+		pw.write(args(0)+","+args(1)+","+args(2)+","+args(3)+ "\n")
+		busLineCount.take(sampleLength).foreach(x => pw.write(x._1 + "," + x._2._2.toString + "\n")) // writing the first records.
 		pw.close // closing file.
 	}
 }
